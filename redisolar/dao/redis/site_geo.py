@@ -63,6 +63,14 @@ class SiteGeoDaoRedis(SiteGeoDaoBase, RedisDaoBase):
         #
         # Your task: Populate a dictionary called "scores" whose keys are site
         # IDs and whose values are the site's capacity.
+        site_ids = self.redis.georadius(  # type: ignore
+            self.key_schema.site_geo_key(), query.coordinate.lng, query.coordinate.lat,
+            query.radius, query.radius_unit.value)
+        capacity_ranking_key = self.key_schema.capacity_ranking_key()
+        for site_id in site_ids:
+            p.zscore(capacity_ranking_key, site_id)
+        id_scores = p.execute()
+        scores = dict(zip(site_ids, id_scores))
         #
         # Make sure to run any Redis commands against a Pipeline object
         # for better performance.
@@ -70,8 +78,8 @@ class SiteGeoDaoRedis(SiteGeoDaoBase, RedisDaoBase):
 
         # Delete the next lines after you've populated a `site_ids`
         # and `scores` variable.
-        site_ids: List[str] = []
-        scores: Dict[str, float] = {}
+        #site_ids: List[str] = []
+        #scores: Dict[str, float] = {}
 
         for site_id in site_ids:
             if scores[site_id] and scores[site_id] > CAPACITY_THRESHOLD:
