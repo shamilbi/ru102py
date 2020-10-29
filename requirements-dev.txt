@@ -3,5 +3,5 @@ yapf
 pylint
 pytest
 twine
-mypy
+#mypy
 pytest-dotenv
