@@ -6,12 +6,15 @@ import pytest
 from redisolar.dao.redis import MeterReadingDaoRedis
 from redisolar.models import MeterReading
 
+#MDR_INSERT = 'redisolar.dao.redis.MetricDaoRedis.insert'
+MDR_INSERT = 'redisolar.dao.redis.MetricDaoRedisTimeseries.insert'
+
 
 @pytest.fixture
 def meter_reading_dao(redis, key_schema):
     with mock.patch('redisolar.dao.redis.CapacityReportDaoRedis.update') as mock_capacity, \
             mock.patch('redisolar.dao.redis.FeedDaoRedis.insert') as mock_feed, \
-            mock.patch('redisolar.dao.redis.MetricDaoRedis.insert') as mock_metric, \
+            mock.patch(MDR_INSERT) as mock_metric, \
             mock.patch('redisolar.dao.redis.SiteStatsDaoRedis.update') as mock_site_stats:
         meter_reading_dao = MeterReadingDaoRedis(redis, key_schema)
         yield {

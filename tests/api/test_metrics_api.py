@@ -6,7 +6,8 @@ from typing import List
 
 import pytest
 
-from redisolar.dao.redis import MetricDaoRedis
+#from redisolar.dao.redis import MetricDaoRedis as Mdr
+from redisolar.dao.redis import MetricDaoRedisTimeseries as Mdr
 from redisolar.models import Measurement
 from redisolar.models import MeterReading
 from redisolar.schema import MeasurementSchema
@@ -15,9 +16,11 @@ TESTING_SITE_ID = 1
 NOW = datetime.datetime.utcnow()
 
 
+#def metric_dao(redis, key_schema):
+#    yield Mdr(redis, key_schema)
 @pytest.fixture
-def metric_dao(redis, key_schema):
-    yield MetricDaoRedis(redis, key_schema)
+def metric_dao(redis_timeseries, key_schema):
+    yield Mdr(redis_timeseries, key_schema)
 
 
 @pytest.fixture
@@ -48,7 +51,7 @@ def _check_measurements(measurements: List[Measurement], limit: int):
 
 #@pytest.mark.skip("Remove for challenge #2")
 def _test_insert_and_retrieve(client, readings: List[MeterReading],
-                              metric_dao: MetricDaoRedis, limit: int):
+                              metric_dao: Mdr, limit: int):
     for reading in readings:
         metric_dao.insert(reading)
 
